@@ -1,0 +1,76 @@
+/* /local/templates/omegait_design/hz/basket/hz-basket-delivery.css — размеры оценочные (макет ~1920) */
+.hz-modal {
+	--hz-primary: #345F62;
+	--hz-white: #FFFFFF;
+	--hz-font-ui: "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+	--hz-font-head: "Lora", Georgia, "Times New Roman", serif;
+
+	position: fixed;
+	inset: 0;
+	z-index: 10000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 16px;
+	background: rgba(28, 28, 28, .38);
+	font-family: var(--hz-font-ui);
+}
+.hz-modal-open { overflow: hidden; }
+
+.hz-modal__dialog {
+	box-sizing: border-box;
+	width: 100%;
+	max-width: 664px;
+	padding: 40px;
+	background: var(--hz-white);
+}
+.hz-modal__head {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+	margin-bottom: 32px;
+}
+.hz-modal__title {
+	margin: 0;
+	font-family: var(--hz-font-head);
+	font-size: 26px;
+	font-weight: 500;
+	line-height: 1.2;
+	text-transform: uppercase;
+	color: var(--hz-primary);
+}
+.hz-modal__close {
+	flex: none;
+	padding: 6px;
+	border: 0;
+	background: transparent;
+	color: var(--hz-primary);
+	cursor: pointer;
+}
+.hz-modal__actions {
+	display: flex;
+	gap: 24px;
+}
+.hz-modal__btn {
+	flex: 1 1 0;
+	height: 48px;
+	border: 1px solid var(--hz-primary);
+	border-radius: 2px;
+	background: var(--hz-primary);
+	color: var(--hz-white);
+	font-family: var(--hz-font-ui);
+	font-size: 16px;
+	text-transform: uppercase;
+	cursor: pointer;
+	transition: filter .15s ease;
+}
+.hz-modal__btn:hover { filter: brightness(1.12); }
+.hz-modal__btn:focus-visible,
+.hz-modal__close:focus-visible { outline: 2px solid var(--hz-primary); outline-offset: 2px; }
+
+@media (max-width: 575px) {
+	.hz-modal__dialog { padding: 24px; }
+	.hz-modal__title { font-size: 20px; }
+	.hz-modal__actions { flex-direction: column; gap: 12px; }
+}

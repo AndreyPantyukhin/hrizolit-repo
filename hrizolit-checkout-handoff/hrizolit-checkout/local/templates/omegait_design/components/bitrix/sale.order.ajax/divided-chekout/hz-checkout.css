@@ -1,0 +1,562 @@
+/*
+ * /local/templates/omegait_design/components/bitrix/sale.order.ajax/template1/hz-checkout.css
+ *
+ * Оформление заказа «Хризолит» (мастер из 3 шагов). Всё под .hz-checkout, подключается ПОСЛЕ style.css.
+ * Размеры — ОЦЕНКА по скриншотам (база макета 1920 / 390): правятся в блоке переменных.
+ */
+
+/* ============================================================ Токены */
+.hz-checkout {
+	--hz-primary: #345F62;
+	--hz-primary-48: rgba(52, 95, 98, .48);
+	--hz-secondary: #3A305E;
+	--hz-gold: #FFF8EF;
+	--hz-metal-gold: #F5E5CD;
+	--hz-metal-silver: #DADADA;
+	--hz-black: #1C1C1C;
+	--hz-black-48: rgba(28, 28, 28, .48);
+	--hz-black-24: rgba(28, 28, 28, .24);
+	--hz-white: #FFFFFF;
+	--hz-white-48: rgba(255, 255, 255, .48);
+
+	/* Inter и Lora подключены в header.php шаблона сайта */
+	--hz-font-ui: "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+	--hz-font-head: "Lora", Georgia, "Times New Roman", serif;
+
+	--hz-gap: 24px;
+	--hz-row-gap: 24px;
+	--hz-field-h: 48px;
+	--hz-radius: 3px;
+	--hz-fs: 14px;
+	--hz-fs-label: 14px;
+	--hz-fs-heading: 18px;
+	--hz-fs-radio: 16px;
+	--hz-main-max: 936px;
+	--hz-aside-w: 522px;
+	--hz-left-offset: 17.3%;
+	--hz-page-pad: 24px;
+
+	font-family: var(--hz-font-ui);
+	color: var(--hz-black);
+}
+.hz-checkout [hidden],
+.hz-checkout .hz-hidden { display: none !important; }
+
+/* фиксированная панель не должна закрывать контент и футер */
+html.hz-checkout-page body { padding-bottom: var(--hz-bar-h, 168px); }
+
+/* ============================================================ Раскладка */
+.hz-checkout .hz-layout {
+	display: flex;
+	align-items: flex-start;
+	gap: 48px;
+	margin: 0;
+	padding: 32px var(--hz-page-pad) 48px;
+}
+.hz-checkout .hz-main {
+	display: flex;
+	flex-wrap: wrap;
+	align-content: flex-start;
+	column-gap: var(--hz-gap);
+	row-gap: var(--hz-row-gap);
+	flex: 1 1 0;
+	min-width: 0;
+	max-width: var(--hz-main-max);
+	width: auto;
+	float: none;
+	padding: 0;
+}
+.hz-checkout .hz-aside {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	flex: 0 0 var(--hz-aside-w);
+	width: var(--hz-aside-w);
+	margin-left: auto;
+	padding: 0;
+	float: none;
+	position: sticky;
+	top: 96px; /* ниже липкой шапки сайта — подогнать */
+	align-self: flex-start;
+	height: auto;
+}
+@media (min-width: 1200px) {
+	.hz-checkout .hz-layout { padding-left: var(--hz-left-offset); }
+}
+@media (max-width: 991px) {
+	.hz-checkout .hz-layout { display: block; padding-top: 24px; }
+	.hz-checkout .hz-main { max-width: none; }
+	.hz-checkout .hz-aside { position: static; width: auto; margin-top: 32px; }
+}
+
+/* Секции региона и свойств «растворяются»: поля становятся flex-элементами .hz-main */
+.hz-checkout #bx-soa-region.bx-active,
+.hz-checkout #bx-soa-properties.bx-active,
+.hz-checkout #bx-soa-region > .bx-soa-section-content,
+.hz-checkout #bx-soa-properties > .bx-soa-section-content,
+.hz-checkout #bx-soa-region .bx_soa_location,
+.hz-checkout #bx-soa-region .bx_soa_location > .col-xs-12,
+.hz-checkout #bx-soa-properties > .bx-soa-section-content > .row,
+.hz-checkout #bx-soa-properties .bx-soa-customer {
+	display: contents;
+}
+.hz-checkout #bx-soa-region [hidden],
+.hz-checkout #bx-soa-properties [hidden] { display: none !important; }
+
+/* Лишнее из штатной разметки */
+.hz-checkout .bx-soa-section-title-container,
+.hz-checkout .bx-soa-more,
+.hz-checkout .bx-soa-reference,
+.hz-checkout #bx-soa-basket,
+.hz-checkout #bx-soa-total-mobile,
+.hz-checkout .bx-soa-cart-total-ghost,
+.hz-checkout .bx-authform-starrequired,
+.hz-checkout .bx-soa-custom-label small {
+	display: none !important;
+}
+.hz-checkout .bx-soa-section { border: 0; border-radius: 0; margin: 0; }
+.hz-checkout .bx-soa-section-content { padding: 0; }
+.hz-checkout .bx-soa { padding-bottom: 0; }
+
+/* Порядок блоков внутри .hz-main */
+.hz-checkout .hz-main > #bx-soa-main-notifications,
+.hz-checkout .hz-main > #bx-soa-auth { flex: 0 0 100%; order: 0; }
+.hz-checkout .hz-stephead { order: 1; }
+.hz-checkout #bx-soa-paysystem { order: 6; flex: 0 0 100%; }
+.hz-checkout #bx-soa-delivery { order: 20; flex: 0 0 100%; }
+.hz-checkout #bx-soa-pickup { order: 21; flex: 0 0 100%; }
+
+/* Заголовки и шапка шага */
+.hz-checkout .hz-heading {
+	flex: 0 0 100%;
+	margin: 0;
+	font-family: var(--hz-font-ui);
+	font-size: var(--hz-fs-heading);
+	font-weight: 400;
+	line-height: 1.2;
+	text-transform: uppercase;
+	color: var(--hz-black);
+}
+.hz-checkout .hz-subline { flex: 0 0 100%; order: 5; margin-top: -8px; font-size: var(--hz-fs-radio); }
+
+.hz-checkout .hz-stephead {
+	flex: 0 0 100%;
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+}
+.hz-checkout .hz-stephead__title { font-size: var(--hz-fs-heading); text-transform: uppercase; }
+.hz-checkout .hz-stephead__sub { margin-top: 8px; font-size: var(--hz-fs-radio); color: var(--hz-black-48); }
+.hz-checkout .hz-link {
+	font-size: var(--hz-fs-radio);
+	text-transform: uppercase;
+	color: var(--hz-primary);
+	text-decoration: none;
+	border-bottom: 1px solid var(--hz-primary);
+	white-space: nowrap;
+}
+.hz-checkout .hz-link:hover { border-bottom-color: transparent; }
+.hz-checkout .hz-back { order: 100; flex: 0 0 100%; }
+
+/* Плашка про выходные */
+.hz-checkout #bx-soa-main-notifications .alert {
+	margin: 0 0 8px;
+	padding: 16px 16px 16px 16px;
+	background: var(--hz-gold);
+	border: 1px solid var(--hz-metal-gold);
+	border-radius: 2px;
+	color: var(--hz-black);
+	font-size: 14px;
+}
+.hz-checkout #bx-soa-main-notifications .alert-danger { background: #fdf0ee; border-color: #e6b8b0; }
+
+/* ============================================================ Поля */
+.hz-checkout #bx-soa-properties .form-group,
+.hz-checkout #bx-soa-region .form-group {
+	flex: 0 0 100%;
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	display: block;
+}
+.hz-checkout #bx-soa-properties .form-group.hz-half,
+.hz-checkout #bx-soa-region .form-group.hz-half {
+	flex-basis: calc(50% - (var(--hz-gap) / 2));
+}
+.hz-checkout #bx-soa-properties .row > .col-sm-12 {
+	flex: 0 0 100%;
+	float: none;
+	width: 100%;
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+}
+@media (max-width: 767px) {
+	.hz-checkout #bx-soa-properties .form-group.hz-half,
+	.hz-checkout #bx-soa-region .form-group.hz-half { flex-basis: 100%; }
+}
+
+.hz-checkout .bx-soa .bx-soa-customer-label,
+.hz-checkout .bx-soa .bx-soa-custom-label,
+.hz-checkout .bx-soa .form-group label {
+	display: block;
+	padding: 0 0 8px;
+	font-size: var(--hz-fs-label);
+	font-weight: 400;
+	line-height: 1.3;
+	color: var(--hz-black);
+}
+.hz-checkout .form-control,
+.hz-checkout .bx-soa-customer-input,
+.hz-checkout .bx-sls .form-control.dropdown-block,
+.hz-checkout .bx-slst .form-control.dropdown-block {
+	height: var(--hz-field-h);
+	padding: 0 16px;
+	background: var(--hz-white);
+	border: 1px solid var(--hz-primary-48);
+	border-radius: var(--hz-radius);
+	box-shadow: none;
+	font-family: var(--hz-font-ui);
+	font-size: var(--hz-fs);
+	color: var(--hz-black);
+}
+.hz-checkout textarea.form-control { height: 136px; padding: 16px; resize: vertical; }
+.hz-checkout .form-control::placeholder { color: var(--hz-primary-48); text-transform: uppercase; opacity: 1; }
+.hz-checkout .form-control:hover { border-color: var(--hz-primary); }
+.hz-checkout .form-control:focus,
+.hz-checkout .form-group .form-control:focus { border-color: var(--hz-primary); outline: 0; box-shadow: none; }
+.hz-checkout .form-control:disabled { color: var(--hz-black-24); border-color: var(--hz-black-24); }
+.hz-checkout .has-error .form-control,
+.hz-checkout .bx-bd-error { border-color: #A94442; }
+
+/* виджет местоположения: подогнать на staging */
+.hz-checkout .bx-sls.form-control,
+.hz-checkout .bx-slst.form-control { padding: 0; }
+.hz-checkout .bx-soa .bx-soa-location-input { padding: 0 16px; }
+
+/* ============================================================ Радио: доставка, оплата */
+.hz-checkout #bx-soa-delivery .bx-soa-pp,
+.hz-checkout #bx-soa-delivery .bx-soa-pp-item-container,
+.hz-checkout #bx-soa-paysystem .bx-soa-pp,
+.hz-checkout #bx-soa-paysystem .bx-soa-pp-item-container {
+	display: block;
+	float: none;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+}
+.hz-checkout #bx-soa-delivery .bx-soa-pp-company,
+.hz-checkout #bx-soa-paysystem .bx-soa-pp-company {
+	float: none;
+	width: 100%;
+	max-width: none;
+	margin: 0;
+	padding: 0 0 16px;
+	border: 0;
+	cursor: pointer;
+	position: relative;
+}
+.hz-checkout #bx-soa-delivery .bx-soa-pp-company-graf-container,
+.hz-checkout #bx-soa-paysystem .bx-soa-pp-company-graf-container { display: none; } /* логотипы — этап 3 (иконки карт) */
+.hz-checkout #bx-soa-delivery.hz-single .bx-soa-pp { display: none; } /* сценарий «Самовывоз»: список доставок не нужен */
+
+.hz-checkout #bx-soa-delivery .bx-soa-pp-company-smalltitle,
+.hz-checkout #bx-soa-paysystem .bx-soa-pp-company-smalltitle {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	padding: 0;
+	font-size: var(--hz-fs-radio);
+	line-height: 1.3;
+	text-align: left;
+	color: var(--hz-black);
+}
+.hz-checkout #bx-soa-delivery .bx-soa-pp-company-smalltitle::before,
+.hz-checkout #bx-soa-paysystem .bx-soa-pp-company-smalltitle::before,
+.hz-checkout .bx-soa-pickup-list-item::before {
+	content: "";
+	flex: 0 0 24px;
+	width: 24px;
+	height: 24px;
+	box-sizing: border-box;
+	border: 1px solid var(--hz-primary);
+	border-radius: 50%;
+	background: var(--hz-white);
+}
+.hz-checkout #bx-soa-delivery .bx-soa-pp-company:hover .bx-soa-pp-company-smalltitle::before,
+.hz-checkout #bx-soa-paysystem .bx-soa-pp-company:hover .bx-soa-pp-company-smalltitle::before {
+	background: radial-gradient(circle, var(--hz-primary-48) 0 30%, var(--hz-white) 34%);
+}
+.hz-checkout #bx-soa-delivery .bx-soa-pp-company.hz-selected .bx-soa-pp-company-smalltitle::before,
+.hz-checkout #bx-soa-paysystem .bx-soa-pp-company.bx-selected .bx-soa-pp-company-smalltitle::before,
+.hz-checkout .bx-soa-pickup-list-item.bx-selected::before {
+	background: radial-gradient(circle, var(--hz-primary) 0 40%, var(--hz-white) 44%);
+}
+
+.hz-checkout .hz-col { display: flex !important; flex-direction: column; }
+
+.hz-checkout #bx-soa-paysystem .bx-soa-pp-desc-container { display: none; } /* описание оплаты в макете не нужно */
+
+/* Описание выбранной оплаты: без фона/рамки штатного стиля, приглушённый текст под радио */
+.hz-checkout #bx-soa-paysystem .bx-soa-pp-desc-container { padding: 0 0 16px 40px; }
+.hz-checkout #bx-soa-paysystem .bx-soa-pp-desc-container .bx-soa-pp-company {
+	width: auto;
+	max-width: 560px;
+	padding: 0;
+	background: transparent;
+	border: 0;
+	cursor: default;
+}
+.hz-checkout #bx-soa-paysystem .bx-soa-pp-desc-container .bx-soa-pp-company-logo,
+.hz-checkout #bx-soa-paysystem .bx-soa-pp-desc-container .bx-soa-pp-company-title,
+.hz-checkout #bx-soa-paysystem .bx-soa-pp-desc-container .bx-soa-pp-company-subTitle { display: none; }
+.hz-checkout #bx-soa-paysystem .bx-soa-pp-company-desc {
+	padding: 0;
+	font-size: 14px;
+	line-height: 1.5;
+	color: var(--hz-black-48);
+}
+
+/* Интерфейс СДЭК в описании выбранной доставки: плоско, без голубого фона и рамки штатного стиля */
+.hz-checkout #bx-soa-delivery .bx-soa-pp-desc-container { padding: 8px 0 0; background: transparent; }
+.hz-checkout #bx-soa-delivery .bx-soa-pp-desc-container .bx-soa-pp-company {
+	float: none;
+	width: 100%;
+	max-width: 560px;
+	padding: 0;
+	background: transparent;
+	border: 0;
+	cursor: default;
+}
+.hz-checkout #bx-soa-delivery .bx-soa-pp-company-title { font-size: 16px; font-weight: 500; }
+.hz-checkout #bx-soa-delivery .bx-soa-pp-company-desc { font-size: 14px; color: var(--hz-black-48); }
+
+/* Список магазинов самовывоза: радио слева, название и адрес справа (штатная разметка createPickUpItem) */
+.hz-checkout #bx-soa-pickup .bx_soa_pickup,
+.hz-checkout #bx-soa-pickup .bx_soa_pickup > .col-xs-12,
+.hz-checkout #bx-soa-pickup .row { margin: 0; padding: 0; }
+.hz-checkout #bx-soa-pickup .bx-soa-pickup-subTitle,
+.hz-checkout #bx-soa-pickup .bx-soa-pickup-l-item-btn,
+.hz-checkout #bx-soa-pickup .bx-soa-pickup-l-item-desc,
+.hz-checkout #bx-soa-pickup .bx-soa-pickup-l-item-img,
+.hz-checkout #bx-soa-pickup .bx-soa-pickup-preview-img { display: none !important; }
+.hz-checkout #bx-soa-pickup .bx-soa-pickup-list { margin: 0; }
+.hz-checkout .bx-soa-pickup-list .bx-soa-pickup-list-item {
+	display: grid;
+	grid-template-columns: 24px 1fr;
+	column-gap: 16px;
+	row-gap: 4px;
+	align-items: center;
+	padding: 24px 0;
+	border: 0;
+	border-bottom: 1px solid var(--hz-metal-silver);
+	background: transparent;
+	cursor: pointer;
+}
+.hz-checkout .bx-soa-pickup-list .bx-soa-pickup-list-item:last-child { border-bottom: 1px solid var(--hz-metal-silver); }
+.hz-checkout .bx-soa-pickup-list-item::before { grid-column: 1; grid-row: 1 / span 2; }
+/* контейнер названия «растворяем», чтобы название и адрес стали ячейками сетки (штатно он скрыт у невыбранных) */
+.hz-checkout .bx-soa-pickup-list-item .bx-soa-pickup-l-item-detail,
+.hz-checkout .bx-soa-pickup-list-item.bx-selected .bx-soa-pickup-l-item-detail { display: contents !important; padding: 0; min-height: 0; }
+.hz-checkout .bx-soa-pickup-l-item-name { grid-column: 2; grid-row: 1; font-size: var(--hz-fs-radio); font-weight: 400; line-height: 1.3; color: var(--hz-black); }
+.hz-checkout .bx-soa-pickup-l-item-adress {
+	grid-column: 2;
+	grid-row: 2;
+	padding: 0;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.4;
+	color: var(--hz-black-48);
+}
+.hz-checkout .bx-soa-pickup-l-item-adress::before { display: none; }
+
+/* Информер движка «Вы заказывали в нашем интернет-магазине…» не нужен: кнопки «Оформить заказ» в мастере нет.
+   Остаётся только плашка про выходные (класс hz-weekend в template.php). */
+.hz-checkout #bx-soa-main-notifications [data-type="informer"]:not(.hz-weekend) { display: none !important; }
+
+/* ============================================================ Кнопки и ссылки */
+.hz-checkout .hz-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	width: 100%;
+	height: var(--hz-field-h);
+	padding: 0 24px;
+	border: 1px solid var(--hz-primary);
+	border-radius: 2px;
+	background: var(--hz-primary);
+	color: var(--hz-white);
+	font-family: var(--hz-font-ui);
+	font-size: 16px;
+	line-height: 1;
+	text-transform: uppercase;
+	text-decoration: none;
+	cursor: pointer;
+	transition: filter .15s ease;
+}
+.hz-checkout .hz-btn:hover { filter: brightness(1.12); color: var(--hz-white); text-decoration: none; }
+.hz-checkout .hz-btn--disabled,
+.hz-checkout .hz-btn--disabled:hover { opacity: .48; cursor: not-allowed; filter: none; }
+.hz-checkout .hz-btn--outline { background: transparent; color: var(--hz-primary); }
+.hz-checkout .hz-btn--outline:hover { background: var(--hz-primary); color: var(--hz-white); filter: none; }
+
+/* ============================================================ Сайдбар */
+.hz-checkout .bx-soa-cart-total {
+	padding: 28px;
+	background: var(--hz-gold);
+	border: 1px solid var(--hz-metal-gold);
+	border-radius: 2px;
+}
+.hz-checkout .bx-soa-cart-total.bx-soa-cart-total-fixed { position: static; width: auto !important; }
+.hz-checkout .bx-soa-cart-total.bx-soa-cart-total-bottom { opacity: 1; }
+
+.hz-checkout .hz-sum__title,
+.hz-checkout .hz-card__title {
+	margin: 0 0 20px;
+	font-family: var(--hz-font-head);
+	font-size: 28px;
+	font-weight: 500;
+	line-height: 1.2;
+	text-transform: uppercase;
+	color: var(--hz-primary);
+}
+.hz-checkout .hz-sum__row {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 16px;
+	padding: 8px 0;
+	font-size: 18px;
+	text-transform: uppercase;
+}
+.hz-checkout .hz-sum__value.is-strong { font-weight: 600; }
+.hz-checkout .hz-sum__value.is-muted { color: var(--hz-black-48); }
+.hz-checkout .hz-sum__store { margin-top: 8px; font-size: 16px; }
+.hz-checkout .hz-sum__store-addr,
+.hz-checkout .hz-sum__hint { margin-top: 8px; font-size: 16px; color: var(--hz-black-48); }
+
+.hz-checkout .hz-sum__coupon .bx-soa-coupon { margin: 12px 0 0; padding: 0; border: 0; }
+.hz-checkout .hz-sum__coupon .bx-soa-coupon-label { display: block; padding: 0 0 8px; font-size: 14px; font-weight: 400; }
+.hz-checkout .hz-sum__coupon .bx-soa-coupon-input input[type=text].form-control {
+	height: var(--hz-field-h);
+	padding: 0 16px;
+	background: var(--hz-white);
+	border: 1px solid var(--hz-primary-48);
+	border-radius: var(--hz-radius);
+	font-size: var(--hz-fs);
+}
+.hz-checkout .hz-sum__coupon .bx-soa-coupon-item strong {
+	display: inline-block;
+	margin: 8px 8px 0 0;
+	padding: 6px 14px;
+	border: 1px solid var(--hz-primary);
+	border-radius: 999px;
+	font-size: 13px;
+	letter-spacing: 0;
+}
+.hz-checkout .hz-sum__coupon .bx-soa-coupon-item strong:first-child { margin-left: 0; }
+
+.hz-checkout .hz-sum__note { margin-top: 20px; padding: 24px; background: var(--hz-white); border: 1px solid var(--hz-primary-48); }
+.hz-checkout .hz-sum__note-title { font-size: 18px; text-transform: uppercase; }
+.hz-checkout .hz-sum__note-text { margin-top: 8px; font-size: 16px; line-height: 1.4; color: var(--hz-black-48); }
+
+.hz-checkout .hz-card { padding: 28px; background: var(--hz-white); border: 1px solid var(--hz-primary-48); border-radius: 2px; }
+.hz-checkout .hz-card__text { margin: 0 0 24px; font-size: 16px; line-height: 1.5; color: var(--hz-black-48); }
+
+/* ============================================================ Нижняя панель (фиксированная) и степпер */
+.hz-checkout .hz-bar {
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 900;
+	box-sizing: border-box;
+	padding: 16px 0 24px;
+	background: var(--hz-secondary);
+	color: var(--hz-white);
+}
+.hz-checkout .hz-bar__inner { padding: 0 var(--hz-page-pad); }
+@media (min-width: 1200px) {
+	/* та же сетка, что у .hz-layout: отступ слева в % от ширины окна */
+	.hz-checkout .hz-bar__inner { padding-left: var(--hz-left-offset); }
+}
+.hz-checkout .hz-bar #bx-soa-orderSave { margin: 0; }
+.hz-checkout .hz-bar #bx-soa-orderSave .hz-btn { max-width: calc((var(--hz-main-max) - var(--hz-gap)) / 2); }
+.hz-checkout .hz-bar__consent { max-width: var(--hz-main-max); margin: 0 0 12px; }
+.hz-checkout .hz-bar__counter { margin: 12px 0 8px; padding: 0 var(--hz-page-pad); font-size: 16px; color: var(--hz-white-48); }
+
+.hz-checkout .hz-bar label[data-bx-user-consent] { display: flex; align-items: flex-start; gap: 12px; margin: 0; font-size: 12px; line-height: 1.4; color: var(--hz-white); }
+.hz-checkout .hz-bar label[data-bx-user-consent] a { color: var(--hz-white); font-size: 12px; font-weight: 400; text-decoration: underline; }
+.hz-checkout .hz-bar label[data-bx-user-consent] input {
+	appearance: none;
+	-webkit-appearance: none;
+	flex: 0 0 24px;
+	width: 24px;
+	height: 24px;
+	margin: 0;
+	box-sizing: border-box;
+	border: 1px solid var(--hz-white);
+	border-radius: 4px;
+	background: transparent;
+	cursor: pointer;
+}
+.hz-checkout .hz-bar label[data-bx-user-consent] input:checked {
+	background: var(--hz-white) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M6 12.5l4 4 8-9' fill='none' stroke='%23345F62' stroke-width='2'/></svg>") center / 18px no-repeat;
+}
+/* Bootstrap (.checkbox) выносит чекбокс абсолютным позиционированием на текст — возвращаем в поток */
+.hz-checkout .hz-bar .checkbox label { min-height: 0; padding-left: 0; }
+.hz-checkout .hz-bar .checkbox input[type="checkbox"],
+.hz-checkout .hz-bar label[data-bx-user-consent] input { position: static; margin: 0; }
+.hz-checkout .hz-bar label[data-bx-user-consent].hz-error input { border-color: #ff9d8f; box-shadow: 0 0 0 2px rgba(255, 157, 143, .5); }
+
+.hz-checkout .hz-steps { display: flex; align-items: center; gap: 0; margin: 0; padding: 0 var(--hz-page-pad); list-style: none; }
+.hz-checkout .hz-steps__item { display: flex; align-items: center; gap: 8px; flex: 1 1 auto; color: var(--hz-white-48); font-size: 16px; }
+.hz-checkout .hz-steps__item::after { content: ""; flex: 1 1 auto; height: 1px; margin: 0 16px; background: var(--hz-white-48); }
+.hz-checkout .hz-steps__pill {
+	display: inline-block;
+	padding: 10px 20px;
+	border: 1px solid var(--hz-white-48);
+	border-radius: 999px;
+	color: var(--hz-white-48);
+	white-space: nowrap;
+}
+.hz-checkout .hz-steps__item.is-current .hz-steps__pill {
+	background: var(--hz-white);
+	border-color: var(--hz-white);
+	color: var(--hz-secondary);
+}
+.hz-checkout .hz-steps a { color: inherit; text-decoration: none; }
+@media (max-width: 767px) {
+	.hz-checkout .hz-steps__item:not(.is-current) { display: none; }
+	.hz-checkout .hz-steps__item.is-current::after { display: block; }
+}
+
+/* ============================================================ Страница заказа после оформления (confirm.php) */
+.hz-confirm { max-width: 1060px; margin: 0 auto; padding: 32px var(--hz-page-pad) 64px; }
+.hz-confirm__header { display: grid; gap: 8px; margin-bottom: 24px; }
+.hz-confirm__title { margin: 0; font-family: var(--hz-font-head); font-size: clamp(22px, 2.6vw, 32px); font-weight: 500; line-height: 1.2; text-transform: uppercase; color: var(--hz-primary); }
+.hz-confirm__subtitle { margin: 0 0 16px; font-size: var(--hz-fs-heading); font-weight: 400; text-transform: uppercase; }
+.hz-confirm__meta { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 14px; }
+.hz-confirm__muted { font-size: 14px; color: var(--hz-black-48); }
+.hz-confirm__strong { font-size: 16px; }
+.hz-confirm__grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+@media (min-width: 900px) { .hz-confirm__grid { grid-template-columns: 1.1fr .9fr; } }
+.hz-confirm__wide { grid-column: 1 / -1; }
+.hz-confirm__card { padding: 24px; background: var(--hz-white); border: 1px solid var(--hz-primary-48); border-radius: 2px; }
+.hz-confirm__totals { background: var(--hz-gold); border-color: var(--hz-metal-gold); }
+.hz-confirm__badge { display: inline-block; padding: 6px 14px; border: 1px solid var(--hz-primary-48); border-radius: 999px; font-size: 13px; text-transform: uppercase; }
+.hz-confirm__badge--ok { border-color: var(--hz-primary); color: var(--hz-primary); }
+.hz-confirm__badge--err { border-color: #A94442; color: #A94442; }
+.hz-confirm__payment { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px; padding: 16px 0; border-top: 1px solid var(--hz-metal-silver); }
+.hz-confirm__payment:first-of-type { border-top: 0; padding-top: 0; }
+.hz-confirm__payment-action .hz-btn { width: auto; min-width: 240px; }
+.hz-confirm__row { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 8px 0; font-size: 16px; }
+.hz-confirm__row--top { align-items: flex-start; }
+.hz-confirm__row--total { margin-top: 8px; padding-top: 16px; border-top: 1px solid var(--hz-metal-gold); font-size: 20px; text-transform: uppercase; }
+.hz-confirm__product { display: grid; grid-template-columns: 64px 1fr auto; gap: 16px; align-items: center; padding: 12px 0; border-top: 1px solid var(--hz-metal-silver); }
+.hz-confirm__product:first-of-type { border-top: 0; }
+.hz-confirm__thumb { width: 64px; height: 64px; object-fit: cover; background: #F8F8F8; }
+.hz-confirm__actions { display: flex; flex-wrap: wrap; gap: 16px; }
+.hz-confirm__actions .hz-btn { width: auto; min-width: 240px; }
